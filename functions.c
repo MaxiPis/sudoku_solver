@@ -5,11 +5,12 @@
 int main()
 {
     // Aqui estamos diciendo que a x asignamos el valor 4.
+
     int x = 4;
     // Aqui decimos que al puntero de tipo int le asignamos la
     // ubicacion en memoria de x.
     // & la direccion (address)
-
+    // inmasdgadsg
     int *px = &x;
     // Cuando esta en el lado dereho, estamos diciendo
     // la cosa apuntada por el puntero
