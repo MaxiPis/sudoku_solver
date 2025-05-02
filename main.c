@@ -1,22 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "functions.h"
 
-void print_grid(int *grid[9])
+bool backtracking_solver(int *grid[9])
 {
     for (int i = 0; i < 9; i++)
     {
         for (int j = 0; j < 9; j++)
         {
-            printf("%d ", grid[i][j]);
-            if (j == 2 || j == 5)
-                printf(" ");
+            for (int n = 1; n < 10; n++)
+            {
+                int current_number = grid[i][j];
+                if (current_number == 0)
+                {
+                    grid[i][j] = n;
+                    if (partial_solution_check(grid))
+                    {
+                        bool check_return = backtracking_solver(grid);
+                        if (check_return == false)
+                            grid[i][j] = 0;
+                    }
+                    else
+
+                        grid[i][j] = 0;
+                }
+            }
+            if (grid[i][j] == 0)
+                return false;
         }
-
-        if (i == 2 || i == 5)
-            printf("\n");
-
-        printf("\n");
     }
+
+    return true;
 }
 
 void main()
@@ -46,13 +61,17 @@ void main()
             // printf("%d ", grid[i][j]);
         }
     }
-
-    // for (int i = 0; i < rows; i++)
-    // {
-    //     for (int j = 0; j < column; j++)
-    //     {
-    //         printf("%d", grid[i][j]);
-    //     }
-    // }
+    backtracking_solver(grid);
+    bool solution_bool = subgrid_check(grid);
+    if (solution_bool)
+        printf("Hay solucion \n");
     print_grid(grid);
+
+    // for (int i = 0; i < 1000; i++)
+    // {
+    //     bool partial_solution_info;
+    //     partial_solution_info = partial_solution_check(grid);
+
+    //     printf("%d \n", i);
+    // }
 }
