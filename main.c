@@ -49,7 +49,7 @@ void main()
 
     // Importamos el .txt
     FILE *file;
-    file = fopen("sudoku_grid.txt", "r");
+    file = fopen("salida.txt", "r");
 
     int num1;
     int num2;

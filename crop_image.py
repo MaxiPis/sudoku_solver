@@ -1,8 +1,7 @@
 from PIL import Image
 
-def main():
+def crop_image():
     img = Image.open("img/image.png")
-
     # Obtenemos el largo de la imagen
     x, y = img.width, img.height
 
@@ -17,12 +16,22 @@ def main():
 
     #  (left, top, right, bottom)
     area = (x_init, y_init, x_final, y_final)
+    diminishing = 25
     for x in range(9):
         for y in range(9):
-            area = (x_init, y_init, x_final, y_final)
+            # Area sin recorte
+            # area = (x_init, y_init, x_final, y_final)
+            # Area con recorte
+            left_less = diminishing + 5
+            top_less = diminishing
+            right_less = diminishing + 5
+            bottom_less = diminishing
+            area = (x_init + left_less, y_init + top_less, x_final - right_less, y_final - bottom_less) 
+
             x_init = x_final
             x_final += len_subgrid_x
             img_new = img.crop(area)
+            # img_new = img_new.convert("1")
             name_img = f"img/i{x}_{y}.png"
             img_new.save(name_img)
         
@@ -32,4 +41,4 @@ def main():
         y_final += len_subgrid_y
 
 if __name__ == "__main__":
-    main()
+     crop_image()

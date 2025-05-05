@@ -1,27 +1,56 @@
-# https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html
-# https://scikit-learn.org/stable/auto_examples/classification/plot_digits_classification.html#sphx-glr-auto-examples-classification-plot-digits-classification-py
-from sklearn.neural_network import MLPClassifier
-from sklearn.datasets import load_digits
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-import matplotlib
-import numpy as np
-import PIL
-import urllib
+from crop_image import crop_image
+from convert_to_bw import image_to_black_and_white
+from recognize_number import recognize_number
+import subprocess
+import os
 
-digits = load_digits()
-X = digits.data      # 8x8 images flattened to 64 features
-y = digits.target    # Labels: 0 to 9
+def main():
+    # Recortamos la imagen 
+    print("Recortando imagen...")
+    crop_image()
+    grid = []
+    row = []
+    # Iteramos por cada imagen
+    print("Reconociendo cada imagen...")
+    for i in range(9):
+        for j in range(9):
+            path = f"img/i{i}_{j}.png"
+            # Convertimos en blanco y negro cada imagen
+            image_to_black_and_white(path)
+            # Reconocemos el numero y lo guardamos en la lista
+            numero = recognize_number(path)
+            row.append(numero)
+        grid.append(row)
+        
+        row = []
+    # print(grid)
+    print("Guardando en formato .txt...")
+    with open("sudoku_grid.txt", "w") as file:
+        string_grid = ""
+        for row in grid:
+            counter = 0
+            for column in row:
+                string_grid += f"{column} "
+                counter += 1
+                if counter == 3:
+                    string_grid += " "
+                    counter = 0
+            string_grid += "\n"
+        string_grid = string_grid[:-1]
+        file.write(string_grid)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    c_file = 'main.c'
+    c_file_functions = 'functions.c'
+    executable = 'main'
 
-clf = MLPClassifier(hidden_layer_sizes=(100,), activation='relu', solver='adam', max_iter=300)
-clf.fit(X_train, y_train)
+    print(f"Compilando {c_file, c_file_functions}...")
+    subprocess.run(['gcc', c_file, c_file_functions,'-o', executable], check=True)
 
-url = "/img/num_test.png"
-fname = np.array(PIL.Image.open(urllib.request.urlopen(url)))
-matplotlib.pyplot.imread(fname, format=None)
-sample = X_test[0].reshape(1, -1)
-print("Predicted:", clf.predict(sample))
-print("Actual:   ", y_test[0])
+    # Ejecutar el programa C compilado
+    print(f"Ejecutando el programa compilado {executable}...")
+    subprocess.run(['./' + executable], check=True)
 
+
+
+if __name__ == "__main__":
+    main()
